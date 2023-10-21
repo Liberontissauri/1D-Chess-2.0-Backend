@@ -3,10 +3,23 @@ import { UsersService } from 'src/Users/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.entity';
 import * as bcrypt from 'bcrypt';
+import { FindUserByIdDto } from './dto/find-user-by-id.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get(':id')
+  async findById(@Param() params: any): Promise<FindUserByIdDto> {
+    const user = await this.usersService.findOneById(params.id);
+
+    const transfer_user = new FindUserByIdDto();
+    transfer_user.username = user.username;
+    transfer_user.created_at = user.createdAt;
+    transfer_user.updated_at = user.updateAt;
+
+    return transfer_user;
+  }
 
   @Post()
   async create(@Body() userBody: CreateUserDto) {
