@@ -31,7 +31,6 @@ export class UsersController {
 
     new_user.username = userBody.username;
     new_user.hash = hash;
-    new_user.salt = salt;
     new_user.createdAt = new Date(Date.now());
     new_user.updateAt = new Date(Date.now());
 
