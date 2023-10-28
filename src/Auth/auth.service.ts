@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/Users/users.service';
 import * as bcrypt from 'bcrypt';
 
+import * as jwt from 'jsonwebtoken';
+import { User } from 'src/Users/users.entity';
+import { AuthorizationRoles, JwtSessionPayload } from './jwt_session_payload';
+import { randomUUID } from 'crypto';
+
 @Injectable()
 export class AuthService {
   constructor(private usersService: UsersService) {}
@@ -9,5 +14,22 @@ export class AuthService {
   async IsPasswordCorrect(id, password) {
     const user = await this.usersService.findOneById(id);
     return await bcrypt.compare(password, user.hash);
+  }
+
+  async CreateJwtRefreshToken(user: User, role: AuthorizationRoles) {
+    const token_id = randomUUID();
+
+    const payload = new JwtSessionPayload(
+      token_id,
+      user.id,
+      user.username,
+      role,
+    );
+
+    const refresh_token = jwt.sign(payload, process.env['JWT_REFRESH_SECRET'], {
+      expiresIn: '10 days',
+    });
+
+    return refresh_token;
   }
 }
