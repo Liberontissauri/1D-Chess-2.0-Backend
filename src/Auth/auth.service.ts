@@ -30,9 +30,13 @@ export class AuthService {
       role,
     );
 
-    const refresh_token = jwt.sign(payload, process.env['JWT_REFRESH_SECRET'], {
-      expiresIn: '10 days',
-    });
+    const refresh_token = jwt.sign(
+      { ...payload },
+      process.env['JWT_REFRESH_SECRET'],
+      {
+        expiresIn: '20 days',
+      },
+    );
 
     return refresh_token;
   }
