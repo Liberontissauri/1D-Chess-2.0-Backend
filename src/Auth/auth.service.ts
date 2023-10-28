@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/Users/users.service';
 import * as bcrypt from 'bcrypt';
-
 import * as jwt from 'jsonwebtoken';
 import { User } from 'src/Users/users.entity';
-import { AuthorizationRoles, JwtSessionPayload } from './jwt_session_payload';
+import {
+  AuthorizationRoles,
+  JwtSessionPayload,
+  TokenType,
+} from './jwt_session_payload';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -23,6 +26,7 @@ export class AuthService {
       token_id,
       user.id,
       user.username,
+      TokenType.Refresh,
       role,
     );
 
