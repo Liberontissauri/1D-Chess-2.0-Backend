@@ -29,7 +29,8 @@ export class AuthController {
       user.id,
       loginBody.password,
     );
-    if (!is_authorized) throw UnauthorizedException;
+    if (!is_authorized)
+      throw new UnauthorizedException('Incorrect username or password');
 
     const refresh_token = await this.authService.CreateJwtRefreshToken(
       user,
