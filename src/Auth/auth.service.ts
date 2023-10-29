@@ -40,4 +40,26 @@ export class AuthService {
 
     return refresh_token;
   }
+
+  async CreateJwtAccessToken(user: User, role: AuthorizationRoles) {
+    const token_id = randomUUID();
+
+    const payload = new JwtSessionPayload(
+      token_id,
+      user.id,
+      user.username,
+      TokenType.Access,
+      role,
+    );
+
+    const access_token = jwt.sign(
+      { ...payload },
+      process.env['JWT_REFRESH_SECRET'],
+      {
+        expiresIn: '10 minutes',
+      },
+    );
+
+    return access_token;
+  }
 }
