@@ -62,4 +62,11 @@ export class AuthService {
 
     return access_token;
   }
+
+  async ParseJwtToken(token_string: string) {
+    const token = jwt.verify(token_string, process.env['JWT_REFRESH_SECRET']);
+    if (typeof token == 'string')
+      throw Error('Token cannot be parsed to string');
+    return token;
+  }
 }
