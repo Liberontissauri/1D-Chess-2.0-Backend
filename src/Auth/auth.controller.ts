@@ -4,12 +4,14 @@ import {
   Body,
   UnauthorizedException,
   Res,
+  Req,
 } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/Users/users.service';
 import { AuthorizationRoles } from './jwt_session_payload';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
 
 @Controller('auth')
 export class AuthController {
@@ -46,5 +48,24 @@ export class AuthController {
     });
 
     return;
+  }
+  @Get('access')
+  async Access(@Req() req: Request) {
+    if (!req.cookies.refreshToken)
+      throw new UnauthorizedException('No Refresh Token Provided');
+    const refresh_token: JwtPayload = await this.authService.ParseJwtToken(
+      req.cookies.refreshToken,
+    );
+
+    if (!refresh_token)
+      throw new UnauthorizedException('Invalid Refresh Token');
+    const user = await this.usersService.findOneById(refresh_token.user_id);
+    const access_token = await this.authService.CreateJwtAccessToken(
+      user,
+      AuthorizationRoles.User,
+    );
+    return {
+      access_token: access_token,
+    };
   }
 }
