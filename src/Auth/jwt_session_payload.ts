@@ -24,6 +24,7 @@ export enum TokenType {
   Access = 'access',
 }
 export enum AuthorizationRoles {
+  Guest = 'guest',
   User = 'user',
   Admin = 'admin',
 }
